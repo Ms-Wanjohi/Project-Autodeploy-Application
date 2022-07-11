@@ -97,6 +97,9 @@ jobs:
             npm install
             # npm install oauth-sign@^0.9.0
             npm audit fix --audit-level=critical --force
+      - slack/notify:
+          event: always
+
 
 workflows:
   default:
