@@ -169,12 +169,12 @@ jobs:
           name: Install dependencies
           command: |
             apk add --update ansible 
-            exit 1
+  
       - run:
           name: Configure server
           command: |
-            ansible-playbook -i inventory.txt main.yml
-            exit 1
+            ansible-playbook -i inventory.txt configure-server.yml
+
       # Here's where you will add some code to rollback on failure      
 
 workflows:
