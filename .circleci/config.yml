@@ -125,8 +125,7 @@ jobs:
       - run:
           name: Install tar and gzip
           command: |
-            sudo apt update -y
-            sudo apt-get install tar gzip -y
+            yum install -y tar gzip
       # Checkout code from git
       - run:
           name: Deploy back-end infrastructure
