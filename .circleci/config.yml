@@ -205,13 +205,12 @@ jobs:
       - run:
           name: Installing Python
           command: |
-            yum update -y
-            yum install python3-pip -y
+            sudo apt-get install python3-pip -y
 
       - run:
           name: Install tar and gzip
           command: |
-            yum install -y tar gzip
+            sudo apt-get install -y tar gzip
 
       - run:
           name: Installing aws-cli
