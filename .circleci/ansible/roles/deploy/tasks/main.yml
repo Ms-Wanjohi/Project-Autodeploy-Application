@@ -1,14 +1,10 @@
 ---
-  - name: Copy files
-    become: true
-    copy:
-      src: /root/project/artifact.tar.gz
-      dest: /home/ubuntu/artifact.tar.gz
   - name: extract files
     become: true
-    shell : |
-        cd /home/ubuntu/
-        tar xvzf artifact.tar.gz -C .
+    unarchive:
+      src: files/artifact.tar.gz
+      dest: /home/ubuntu
+  
   - name: start app
     become: true
     shell : |

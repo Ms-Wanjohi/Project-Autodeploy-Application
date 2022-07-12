@@ -180,7 +180,7 @@ jobs:
     steps:
       - checkout
       - add_ssh_keys:
-          fingerprints: ["fd:2a:2d:9c:89:ce:ec:86:28:9c:b6:35:0f:1f:4c:8a"] 
+          fingerprints: ["7b:d1:3f:57:74:15:c9:c3:83:fa:ba:8b:ab:68:68:78"] 
       - attach_workspace:
           at: ~/
       - run:
@@ -260,7 +260,7 @@ jobs:
     steps:
       - checkout
       - add_ssh_keys:
-          fingerprints: ["fd:2a:2d:9c:89:ce:ec:86:28:9c:b6:35:0f:1f:4c:8a"] 
+          fingerprints: ["7b:d1:3f:57:74:15:c9:c3:83:fa:ba:8b:ab:68:68:78"] 
       - attach_workspace:
           at: ~/
 
@@ -293,6 +293,8 @@ jobs:
             cd ..
             # Zip the directory
             tar -C backend -czvf artifact.tar.gz .
+            mkdir -p ~/project/.circleci/ansible/roles/deploy/files
+            cp artifact.tar.gz .circleci/ansible/roles/deploy/files
             cd .circleci/ansible
             echo "Contents  of the inventory.txt file is -------"
             cat inventory.txt
@@ -305,6 +307,8 @@ jobs:
       - image: python:3.7-alpine3.11
     steps:
       - checkout
+      - attach_workspace:
+          at: ~/
       - run:
           name: Install dependencies
           command: |
@@ -338,10 +342,10 @@ jobs:
             else
               return 1
             fi
-      # - destroy-environment:
-      #     workflow_id: '${CIRCLE_WORKFLOW_ID:0:7}'
-      # - revert-migrations:
-      #     workflow_id: '${CIRCLE_WORKFLOW_ID:0:7}'
+      - destroy-environment:
+          workflow_id: '${CIRCLE_WORKFLOW_ID:0:7}'
+      - revert-migrations:
+          workflow_id: '${CIRCLE_WORKFLOW_ID:0:7}'
 
 workflows:
   default:
