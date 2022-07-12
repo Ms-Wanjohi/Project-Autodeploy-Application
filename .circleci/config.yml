@@ -199,7 +199,7 @@ jobs:
             fi
   deploy-frontend:
     docker:
-      - image: amazon/aws-cli
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - run:
@@ -208,10 +208,6 @@ jobs:
             yum update -y
             yum install python3-pip -y
 
-      - run:
-          name: Install npm and node
-          command: |
-            apk add --update nodejs npm
       - run:
           name: Install tar and gzip
           command: |
