@@ -2,6 +2,25 @@ version: 2.1
 
 commands:
 
+  revert-migrations:
+    description: Revert the last migration if successfully run in the current workflow.
+    parameters:
+      workflow_id:
+        type: string
+    steps:
+      - run:
+          name: Revert migrations
+          when: on_fail
+          command: |
+            SUCCESS=$(curl --insecure  https://kvdb.io/Bk9nJNpRYxnDNw92tSP1kj/migration_<< parameters.workflow_id >>)
+            if(( $SUCCESS==1 )); 
+            then
+              cd ~/project/backend
+              npm install
+              npm run migrations:revert
+              exit 1
+            fi
+
   destroy-environment:
     parameters:
       workflow_id:
@@ -279,31 +298,33 @@ jobs:
             echo "Contents  of the inventory.txt file is -------"
             cat inventory.txt
             ansible-playbook -i inventory.txt deploy-backend.yml
-      - destroy-environment:
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7} 
+        - destroy-environment:
+            workflow_id: '${CIRCLE_WORKFLOW_ID:0:7}'
+        - revert-migrations:
+            workflow_id: '${CIRCLE_WORKFLOW_ID:0:7}'
 
   smoke-test:
     docker:
-      image: alpine:latest
+      - image: alpine:latest
     steps:
       - checkout
       - run:
           name: Install dependencies
           command: |
             apk add --update curl
-            pip3 install awscli
+            pip install awscli
             apk add --update nodejs npm
       - run:
           name: Backend Smoke Test
           command: |
-              export API_URL="http://${BACKEND_IP}:3030"
-              echo "${API_URL}"
-              if curl "${API_URL}/api/status" | grep "ok"
-              then
-                  return 0
-              else
-                  return 1
-              fi
+            export API_URL="http://${BACKEND_IP}:3030"
+            echo "${API_URL}"
+            if curl "${API_URL}/api/status" | grep "ok"
+            then
+                return 0
+            else
+                return 1
+            fi
       - run:
           name: Frontend smoke test.
           command: |
@@ -316,6 +337,11 @@ jobs:
             else
               return 1
             fi
+      - destroy-environment:
+          workflow_id: '${CIRCLE_WORKFLOW_ID:0:7}'
+      - revert-migrations:
+          workflow_id: '${CIRCLE_WORKFLOW_ID:0:7}'
+
 workflows:
   default:
     jobs:
