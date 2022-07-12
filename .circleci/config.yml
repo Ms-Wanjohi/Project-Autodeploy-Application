@@ -209,6 +209,12 @@ jobs:
             yum install python3-pip -y
 
       - run:
+          name: Install npm and node
+          command: |
+            apt-get install -y nodejs
+            apt-get install -y npm
+
+      - run:
           name: Install tar and gzip
           command: |
             yum install -y tar gzip
@@ -216,9 +222,7 @@ jobs:
       - run:
           name: Installing aws-cli
           command: |
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            unzip awscliv2.zip
-            sudo ./aws/install
+            pip3 install awscli
 
       - run:
           name: Get backend url
