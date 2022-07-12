@@ -205,15 +205,14 @@ jobs:
       - run:
           name: Installing Python
           command: |
-            sudo apt update
-            sudo apt install python3-pip
+            yum update -y
+            yum install python3-pip -y
 
       - run:
           name: Installing Node
           command: |
-            sudo apt update
-            sudo apt install nodejs
-            sudo apt install npm
+            yum install nodejs -y
+            yum install npm -y
 
       - run:
           name: Installing aws-cli
@@ -257,8 +256,8 @@ jobs:
       - run:
           name: Installing Python
           command: |
-            sudo apt update
-            sudo apt install python3-pip
+            yum update -y
+            yum install python3-pip -y
       - run:
           name: Install tar and gzip
           command: |
@@ -267,9 +266,9 @@ jobs:
       - run:
           name: Installing Node
           command: |
-            sudo apt update
-            sudo apt install nodejs
-            sudo apt install npm
+            yum install nodejs -y
+            yum install npm -y
+
 
       - run:
           name: Installing aws-cli
@@ -296,7 +295,9 @@ jobs:
             cat inventory.txt
             ansible-playbook -i inventory.txt deploy-backend.yml
       - destroy-environment:
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+
+
       # Here's where you will add some code to rollback on failure  
 
   # smoke-test:
