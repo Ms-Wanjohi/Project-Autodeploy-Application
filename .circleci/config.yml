@@ -209,10 +209,9 @@ jobs:
             yum install python3-pip -y
 
       - run:
-          name: Installing Node
+          name: Install tar and gzip
           command: |
-            yum install nodejs -y
-            yum install npm -y
+            yum install -y tar gzip
 
       - run:
           name: Installing aws-cli
@@ -220,11 +219,7 @@ jobs:
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
             sudo ./aws/install
-      - run:
-          name: Installing ansible
-          command: |
-            sudo add-apt-repository --yes --update ppa:ansible/ansible
-            sudo apt install ansible
+
       - run:
           name: Get backend url
           command: |
@@ -253,34 +248,27 @@ jobs:
           fingerprints: ["fd:2a:2d:9c:89:ce:ec:86:28:9c:b6:35:0f:1f:4c:8a"] 
       - attach_workspace:
           at: ~/
-      - run:
-          name: Installing Python
-          command: |
-            yum update -y
-            yum install python3-pip -y
+
       - run:
           name: Install tar and gzip
           command: |
-            yum install -y tar gzip
+            apk add --update tar gzip
 
       - run:
           name: Installing Node
           command: |
-            yum install nodejs -y
-            yum install npm -y
-
+            apk add --update nodejs npm
 
       - run:
           name: Installing aws-cli
           command: |
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            unzip awscliv2.zip
-            sudo ./aws/install
+            pip3 install awscli
+
       - run:
           name: Installing ansible
           command: |
-            sudo add-apt-repository --yes --update ppa:ansible/ansible
-            sudo apt install ansible
+            apk add --update ansible
+
       - run:
           name: Deploy backend
           command: |
