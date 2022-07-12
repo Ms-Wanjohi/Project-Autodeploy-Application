@@ -211,9 +211,7 @@ jobs:
       - run:
           name: Install npm and node
           command: |
-            apt-get install -y nodejs
-            apt-get install -y npm
-
+            apk add --update nodejs npm
       - run:
           name: Install tar and gzip
           command: |
