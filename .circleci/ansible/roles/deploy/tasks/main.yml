@@ -1,20 +1,48 @@
 ---
-  - name: Copy files to server
-    become: True
-    copy:
-      src: /root/project/artifact.tar.gz
-      dest: /home/ubuntu/artifact.tar.gz
+  - name: "Update Packages"
+    become: true
+    apt:
+      update_cache: yes
 
-  - name: Extract artifact
-    become: True
-    shell : |
-      cd /home/ubuntu/
-      tar xvzf artifact.tar.gz .
-      
-  - name: start app
-    become: True
-    shell : |
-      cd /home/ubuntu/
-      npm install
-      sudo pm2 stop default
-      sudo pm2 start npm -- start
+  - name: "Upgrade Packages"
+    become: true
+    apt:
+      upgrade: yes
+
+  - name: "Remove Un-used Dependencies"
+    become: true
+    apt:
+      autoremove: yes
+
+  - name: "Install nodejs and npm"
+    become: true
+    apt:
+      name: [nodejs, npm]
+      state: latest
+      update_cache: yes
+
+  - name: "Install pm2"
+    become: yes
+    npm:
+      name: pm2
+      global: yes
+      production: yes
+      state: latest
+
+  - name: "Create Backend Directory"
+    become: true
+    file:
+      path: /home/ubuntu/backend
+      state: directory
+
+  - name: "Extract artifact"
+    become: true
+    unarchive:
+      src: /root/project/artifact.tar.gz
+      dest: /home/ubuntu/backend
+
+  - name: "Start Project"
+    become: true
+    command: pm2 start npm --name "backend" -- start
+    args:
+      chdir: /home/ubuntu/backend
