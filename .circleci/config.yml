@@ -405,6 +405,10 @@ jobs:
     docker:
       - image: amazon/aws-cli
     steps:
+      - run:
+          name: Install dependencies
+          command: |
+            yum install -y tar gzip
       - checkout
       - attach_workspace:
           at: ~/      
