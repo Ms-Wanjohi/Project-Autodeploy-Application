@@ -192,6 +192,8 @@ jobs:
           TYPEORM_DATABASE: "{{ lookup('env', 'TYPEORM_DATABASE') }}"
     steps:
       - checkout
+      - restore_cache:
+          keys: [backend-build]
       - add_ssh_keys:
           fingerprints: ["7b:d1:3f:57:74:15:c9:c3:83:fa:ba:8b:ab:68:68:78"] 
       - attach_workspace:
@@ -272,11 +274,12 @@ jobs:
       - image: python:3.7-alpine3.11
     steps:
       - checkout
+      - restore_cache:
+          keys: [backend-build]      
       - add_ssh_keys:
           fingerprints: ["7b:d1:3f:57:74:15:c9:c3:83:fa:ba:8b:ab:68:68:78"] 
       - attach_workspace:
           at: ~/
-
       - run:
           name: Install tar and gzip
           command: |
@@ -309,7 +312,7 @@ jobs:
             cd .circleci/ansible
             echo "Contents  of the inventory.txt file is -------"
             cat inventory.txt
-            ansible-playbook -i inventory.txt deploy-backend.yml ansible.cfg
+            ansible-playbook -i inventory.txt deploy-backend.yml
           no_output_timeout: 30m
 
       - destroy-environment:
@@ -335,9 +338,9 @@ jobs:
           name: Backend Smoke Test
           command: |
             BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
-            export API_URL="http://${BACKEND_IP}:3030"
-            echo ${API_URL}
-            if curl ${API_URL}/api/status | grep "ok"
+            API_URL="http://${BACKEND_IP}:3030"
+        
+            if curl "${API_URL}/api/status" | grep "ok"
             then
               exit 0
             else
